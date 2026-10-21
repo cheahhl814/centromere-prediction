@@ -2,7 +2,7 @@
 
 `nextflow-runner/` is the executable pipeline (5 processes in
 `modules/centromere.nf`, kept verbatim from the proven standalone
-`nf-centromere-agents` pipeline — commit `143a5dc` value-channel fix included).
+`centromere-prediction` pipeline — commit `143a5dc` value-channel fix included).
 The bash recipes in the sub-skills (`preflight/`, `run/`, `qc/`, `debug/`) are
 the source of truth for the procedure; the runner is the bulk executor.
 

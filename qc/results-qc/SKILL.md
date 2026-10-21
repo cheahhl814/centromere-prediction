@@ -1,6 +1,6 @@
 ---
-name: nf-centromere-results-qc
-description: 'Phase 3 of nf-centromere-agents: interpret results/centromere/ outputs (monomer counts and lengths, density windows, candidate regions, stringDecomposer decomposition structure, per-scaffold summary) with healthy-range targets and red-flag diagnostics, then write centromere_report.md with a verdict (good | fragmented | monomer_filter_too_strict | no_centromeric_signal). Use when the centromere run finished, or for checking and interpreting existing centromere results.'
+name: centromere-prediction-results-qc
+description: 'Phase 3 of centromere-prediction: interpret results/centromere/ outputs (monomer counts and lengths, density windows, candidate regions, stringDecomposer decomposition structure, per-scaffold summary) with healthy-range targets and red-flag diagnostics, then write centromere_report.md with a verdict (good | fragmented | monomer_filter_too_strict | no_centromeric_signal). Use when the centromere run finished, or for checking and interpreting existing centromere results.'
 version: 1.0.0
 updated: "2026-10-21"
 triggers:

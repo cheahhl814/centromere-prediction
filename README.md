@@ -1,4 +1,4 @@
-# nf-centromere-agents
+# centromere-prediction
 
 Centromere annotation & analysis for ONT-based fish genome assemblies (Betta_v3 output).
 
@@ -9,7 +9,7 @@ per-scaffold summary — packaged as a BettaMt-convention agent skill wrapping a
 Nextflow DSL2 runner.
 
 > [!NOTE]
-> This skill is a rebuild of the standalone `nf-centromere-agents` pipeline. The
+> This skill is a rebuild of the standalone `centromere-prediction` pipeline. The
 > Nextflow code (5 processes) is kept verbatim from the source that fixed 5 latent
 > Betta_v3-era bugs (see the orchestrator `SKILL.md` §4); only the skill
 > documentation layer was restructured into preflight → run → qc → debug sub-skills.
@@ -37,8 +37,8 @@ Nextflow DSL2 runner.
 **Manually** (self-contained pixi manifest; tool env auto-installs on first use):
 
 ```bash
-git clone https://github.com/cheahhl814/nf-centromere-agents.git
-cd nf-centromere-agents
+git clone https://github.com/cheahhl814/centromere-prediction.git
+cd centromere-prediction
 pixi lock --dry-run           # verify the 7-tool env solves
 pixi run -e nextflow nextflow -version   # optional isolated runner env
 ```
@@ -129,7 +129,7 @@ no GitHub API).
 ## Repository layout
 
 ```
-nf-centromere-agents/
+centromere-prediction/
 ├── SKILL.md                    # orchestrator router (start reading here for agents)
 ├── README.md                   # this file
 ├── pixi.toml                   # one manifest: 6 tools + isolated nextflow env
@@ -160,7 +160,7 @@ nf-centromere-agents/
 
 ## Provenance
 
-Rebuilt from `nf-centromere-agents.zip` with the
+Rebuilt from `centromere-prediction.zip` with the
 [skill-forge](https://github.com/cheahhl814/skill-forge) meta-skill (BettaMt
 pattern, cf. [BettaMt-agents](https://github.com/cheahhl814/BettaMt-agents),
 [Betta-WGS-agent](https://github.com/cheahhl814/Betta-WGS-agent)). Worked example:

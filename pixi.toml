@@ -1,5 +1,5 @@
 [workspace]
-name = "nf-centromere-agents"
+name = "centromere-prediction"
 version = "1.0.0"
 description = "Centromere annotation and analysis for ONT-based fish genome assemblies — TideHunter monomers, TRF density, stringDecomposer"
 channels = ["conda-forge", "bioconda"]
@@ -29,12 +29,12 @@ nextflow = ">=23.10"
 # sub-skill SKILL.md (preflight/run-preflight, run/pipeline-run, ...).
 # `pixi env run` variants: prefix with `pixi run -e nextflow` for the runner.
 preflight = "echo 'Run the centromere preflight — see preflight/run-preflight/SKILL.md'"
-run = "echo 'Run the nf-centromere-agents workflow — see run/pipeline-run/SKILL.md'"
+run = "echo 'Run the centromere-prediction workflow — see run/pipeline-run/SKILL.md'"
 qc = "echo 'Build centromere_report.md from results/centromere/ — see qc/results-qc/SKILL.md'"
 debug = "echo 'Interpret a failed run — see debug/run-debug/SKILL.md'"
 # Dry-run the whole environment solve (the battle-test gate; also a good smoke test)
 lock-check = "pixi lock --dry-run"
-# Self-check: compares this skill's git SHA to upstream (github.com/cheahhl814/nf-centromere-agents).
+# Self-check: compares this skill's git SHA to upstream (github.com/cheahhl814/centromere-prediction).
 # See bin/skill-update-check.py for the verdict legend (UP-TO-DATE / BEHIND-BY-N / OFFLINE).
 update-check = "python3 bin/skill-update-check.py"
 

@@ -1,11 +1,12 @@
 ---
-name: nf-centromere-agents
-description: 'Run and interpret centromere annotation and analysis with the nf-centromere-agents pipeline (BettaMt-convention meta-skill): TideHunter monomer discovery from reads, TRF tandem-repeat density on the assembly, stringDecomposer monomer decomposition, per-scaffold summary. Use when the user wants to find/annotate candidate centromere regions on an ONT fish assembly, run the centromere Nextflow workflow, or interpret existing results/centromere/ outputs with healthy-range targets and red-flag diagnostics. Triggers: "centromere", "centromere analysis", "find centromeres", "centromere annotation", "TideHunter", "TRF density", "stringdecomposer", "centromere candidates", "betta centromere", "check centromere results".'
+name: centromere-prediction
+description: 'Run and interpret centromere prediction for ONT-based fish genome assemblies (BettaMt-convention meta-skill wrapping a 5-process Nextflow DSL2 pipeline): TideHunter monomer discovery from reads, TRF tandem-repeat density on the assembly, stringDecomposer monomer decomposition, per-scaffold summary. Use when the user wants to find/annotate candidate centromere regions on a fish assembly, run the centromere Nextflow workflow, or interpret existing results/centromere/ outputs with healthy-range targets and red-flag diagnostics. Outputs are candidate regions, not proven centromeres. Triggers: "centromere", "centromere analysis", "centromere prediction", "find centromeres", "centromere annotation", "TideHunter", "TRF density", "stringdecomposer", "centromere candidates", "betta centromere", "check centromere results".'
 version: 1.0.0
 updated: "2026-10-21"
 triggers:
   - "centromere"
   - "centromere analysis"
+  - "centromere prediction"
   - "find centromeres"
   - "centromere annotation"
   - "TideHunter"
@@ -19,7 +20,7 @@ skills:
   - "chartz"
 ---
 
-# nf-centromere-agents — Centromere Annotation & Analysis
+# centromere-prediction — Centromere Prediction
 
 > **v1.0.0.** A BettaMt-convention meta-skill for centromere annotation of ONT-based fish genome assemblies. Wraps the standalone Nextflow DSL2 pipeline `runners/nextflow-runner/` (5 processes: `tidehunter_cluster`, `trf_density`, `identify_regions`, `stringdecomposer`, `centromere_summary`) and teaches the agent how to run it and — more importantly — how to *interpret* the outputs with evidence-based verdicts.
 
@@ -173,7 +174,7 @@ The agent must stop and warn the user if:
 
 ## Update Check
 
-This skill ships with a self-update check that compares the deployed skill against the upstream `github.com/cheahhl814/nf-centromere-agents` repo via `git fetch` + SHA diff — no GitHub API call, no extra dependencies.
+This skill ships with a self-update check that compares the deployed skill against the upstream `github.com/cheahhl814/centromere-prediction` repo via `git fetch` + SHA diff — no GitHub API call, no extra dependencies.
 
 ```bash
 pixi run update-check

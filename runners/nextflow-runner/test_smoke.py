@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""test_smoke.py — structural smoke test for the nf-centromere-agents runner.
+"""test_smoke.py — structural smoke test for the centromere-prediction runner.
 
 Verifies (no Nextflow execution, stdlib only):
   1. main.nf exists, declares DSL2, validates params, uses a VALUE channel for assembly

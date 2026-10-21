@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""nf-centromere-agents skill update check (v1.0.0).
+"""centromere-prediction skill update check (v1.0.0).
 
 Compares the deployed skill's git SHA + version to the upstream repo
-(github.com/cheahhl814/nf-centromere-agents). No network calls beyond `git fetch`.
+(github.com/cheahhl814/centromere-prediction). No network calls beyond `git fetch`.
 
 Verdicts:
   UP-TO-DATE       local HEAD matches origin/HEAD (or origin/<default-branch>)
@@ -150,7 +150,7 @@ def main() -> int:
         print("  Option A (canonical, no git auth needed):")
         print("    1. rsync -a --exclude='.git' \\")
         print("         <skill_source>/ \\")
-        print("         ~/.pi/agent/skills/nf-centromere-agents/")
+        print("         ~/.pi/agent/skills/centromere-prediction/")
         print("    2. diff -rq <src> <dst> --exclude='.git'   # verify zero drift")
         print("         (skill_source = this skill's source checkout,")
         print("          skill_target = the matching path under ~/.pi/agent/skills/)")

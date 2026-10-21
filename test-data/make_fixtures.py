@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""nf-centromere-agents test fixtures (v1.0.0).
+"""centromere-prediction test fixtures (v1.0.0).
 
 Writes tiny deterministic input fixtures + MANIFEST.tsv into <outdir>.
 Consumed by battle-test check #12 (data fixtures + execution canary).

@@ -1,6 +1,6 @@
 ---
-name: nf-centromere-run-debug
-description: 'Failure interpreter for nf-centromere-agents: match a failed centromere run (stderr, run log, or weird outputs) against a signature library of known failure patterns — channel semantics, publishDir overwrite:false stale files, -resume gotchas, empty TRF/TideHunter outputs, tool-env gaps, and legacy Betta_v3 quirks — and recommend a concrete fix. Use when a centromere run fails, produces empty or partial outputs, or behaves suspiciously (e.g. stringdecomposer ran for only one scaffold).'
+name: centromere-prediction-run-debug
+description: 'Failure interpreter for centromere-prediction: match a failed centromere run (stderr, run log, or weird outputs) against a signature library of known failure patterns — channel semantics, publishDir overwrite:false stale files, -resume gotchas, empty TRF/TideHunter outputs, tool-env gaps, and legacy Betta_v3 quirks — and recommend a concrete fix. Use when a centromere run fails, produces empty or partial outputs, or behaves suspiciously (e.g. stringdecomposer ran for only one scaffold).'
 version: 1.0.0
 updated: "2026-10-21"
 triggers:

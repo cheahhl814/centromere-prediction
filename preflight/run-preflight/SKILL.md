@@ -1,6 +1,6 @@
 ---
-name: nf-centromere-run-preflight
-description: 'Phase 1 of nf-centromere-agents: validate centromere run inputs (reads FASTQ/FASTA + assembly FASTA), verify the pixi tool env solves, check the helper script and Nextflow availability, and write the run params.json + preflight verdict (GO / GO-WITH-WARNINGS / NO-GO). Use when starting a centromere analysis, after locating trimmed nuclear reads and a polished assembly, or before invoking the centromere run sub-skill.'
+name: centromere-prediction-run-preflight
+description: 'Phase 1 of centromere-prediction: validate centromere run inputs (reads FASTQ/FASTA + assembly FASTA), verify the pixi tool env solves, check the helper script and Nextflow availability, and write the run params.json + preflight verdict (GO / GO-WITH-WARNINGS / NO-GO). Use when starting a centromere analysis, after locating trimmed nuclear reads and a polished assembly, or before invoking the centromere run sub-skill.'
 version: 1.0.0
 updated: "2026-10-21"
 triggers:
@@ -41,7 +41,7 @@ Refuse to proceed (and route the user back) if the analysis `RUN_DIR` is not wri
 
 ```bash
 RUN_DIR="${RUN_DIR:-$PWD}"          # analysis run dir — where results land
-SKILL_ROOT=<path to this skill>     # e.g. ~/.agents/skills/nf-centromere-agents
+SKILL_ROOT=<path to this skill>     # e.g. ~/.agents/skills/centromere-prediction
 
 # 1. Inputs exist and are non-empty
 for f in "<reads.fastq.gz>" "<assembly.fasta>"; do

@@ -1,6 +1,6 @@
 ---
-name: nf-centromere-pipeline-run
-description: 'Phase 2 of nf-centromere-agents: run the 5-process centromere Nextflow workflow (TideHunter monomer discovery, TRF density, identify_regions, stringdecomposer, centromere_summary) with a dry-run preview, explicit user confirmation, background-execution pattern, and the -resume / publishDir gotchas. Use when preflight passed and the centromere run should be started, resumed, or monitored.'
+name: centromere-prediction-pipeline-run
+description: 'Phase 2 of centromere-prediction: run the 5-process centromere Nextflow workflow (TideHunter monomer discovery, TRF density, identify_regions, stringdecomposer, centromere_summary) with a dry-run preview, explicit user confirmation, background-execution pattern, and the -resume / publishDir gotchas. Use when preflight passed and the centromere run should be started, resumed, or monitored.'
 version: 1.0.0
 updated: "2026-10-21"
 triggers:
