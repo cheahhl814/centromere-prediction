@@ -7,16 +7,16 @@ params.reads = ""
 params.assembly = ""
 // Assembly FASTA (scaffolded or polished)
 
-// Validate required parameters
-if (!params.reads || !params.assembly) {
-    error "Missing required parameters: provide --reads and --assembly"
-}
-
 // Modules
 include { CENTROMERE } from "./modules/centromere.nf"
 
 // Workflow
 workflow {
+    // Nextflow ≥26 forbids bare statements at script top level — the params
+    // validation lives inside the workflow (strict-DSL compliant).
+    if (!params.reads || !params.assembly) {
+        error "Missing required parameters: provide --reads and --assembly"
+    }
     reads_ch    = Channel.fromPath(params.reads, checkIfExists: true)
     // Assembly as a VALUE channel: it is consumed by multiple processes and
     // must be reusable for every stringdecomposer task (queue channels with a

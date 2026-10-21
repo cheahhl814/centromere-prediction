@@ -33,3 +33,4 @@ tool-inventory.json
 .nextflow/
 .nextflow.log*
 centromere_run.log
+debug-report.md

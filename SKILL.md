@@ -20,7 +20,7 @@ triggers:
 
 > **v1.0.0.** A BettaMt-convention meta-skill for centromere annotation of ONT-based fish genome assemblies. Wraps the standalone Nextflow DSL2 pipeline `runners/nextflow-runner/` (5 processes: `tidehunter_cluster`, `trf_density`, `identify_regions`, `stringdecomposer`, `centromere_summary`) and teaches the agent how to run it and — more importantly — how to *interpret* the outputs with evidence-based verdicts.
 
-**History:** the centromere module started as `modules/centromere.nf` inside Betta_v3, where it was an orphan (not wired into `main.nf`). It was separated into its own standalone pipeline `nf-centromere-agents` and **5 latent bugs were fixed** en route (see §4 below; the 5th — a Nextflow channel-semantics bug that silently limited `stringdecomposer` to a single execution — surfaced on the first real PR001 (*Parosphromenus rubrimontis*) run and was fixed in commit `143a5dc`). This skill is the BettaMt-format rebuild of that pipeline: the Nextflow code is kept verbatim, only the documentation layer was restructured.
+**History:** the centromere module started as `modules/centromere.nf` inside Betta_v3, where it was an orphan (not wired into `main.nf`). It was separated into its own standalone pipeline `nf-centromere-agents` and **5 latent bugs were fixed** en route (see §4 below; the 5th — a Nextflow channel-semantics bug that silently limited `stringdecomposer` to a single execution — surfaced on the first real PR001 (*Parosphromenus rubrimontis*) run and was fixed in commit `143a5dc`). This skill is the BettaMt-format rebuild of that pipeline: the Nextflow code is kept verbatim except for 4 documented adaptations to the skill layout + Nextflow 26 strict DSL (§4b below); only the documentation layer was restructured.
 
 ## Audience
 
@@ -126,6 +126,13 @@ The analysis is divided into **three sequential phases**: Preflight → Run → 
 5. **`stringdecomposer` ran only once (queue-channel bug)** — `assembly` and `monomers` were single-value queue channels; Nextflow limits a multi-input process to the shortest channel. Fixed: `assembly` is a value channel (`Channel.value(file(...))`) and monomers are combined into the regions tuple (`.combine`). Verified on PR001: all 173 candidate regions run.
 
 If the user still has old Betta_v3-era results, `debug/run-debug` covers the legacy quirks in its signature library.
+
+### 4b. Adaptations made during the rebuild (4 — all verified by the `-profile test -stub-run` canary)
+
+1. **Manifest paths**: `${baseDir}/envs/centromere/pixi.toml` → `${projectDir}/../../pixi.toml` (one-manifest convention at the skill root) and `bash ${baseDir}/bin/...` → `${projectDir}/../../bin/...`.
+2. **Strict-DSL publishDir** (Nextflow 24+ parser v2): the `stringdecomposer` bare-string `publishDir` was evaluated at process-definition time → `No such property: scaffold for class: ProcessDslV1`. Fixed: wrapped in a closure — `publishDir path: { "${launchDir}/results/centromere/stringdecomposer/${scaffold}" }, ...`.
+3. **Strict-DSL main.nf**: the top-level params-validation `if` was mixed with script declarations (hard error in Nextflow ≥26) — moved inside the `workflow` block. Also registered the `test` profile (`includeConfig 'conf/test.config'`) so `-profile test -stub-run` works.
+4. **Pixi-env untaint**: nextflow launched via `pixi run -e nextflow` propagates `PIXI_*` activation variables into tasks, and the nested `pixi run --manifest-path` then silently resolves the *active* env (nextflow's) instead of the tool env → `Tool: command not found` inside tasks while the same command works manually. Fixed: every pixi invocation in the modules is prefixed with `env -u PIXI_IN_SHELL -u PIXI_PROJECT_MANIFEST -u PIXI_ENVIRONMENT_NAME -u PIXI_ENVIRONMENT_PLATFORMS -u PIXI_EXE`.
 
 ## B. The Evidence Chain & Handoff Contract
 

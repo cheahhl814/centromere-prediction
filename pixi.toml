@@ -3,7 +3,9 @@ name = "nf-centromere-agents"
 version = "1.0.0"
 description = "Centromere annotation and analysis for ONT-based fish genome assemblies — TideHunter monomers, TRF density, stringDecomposer"
 channels = ["conda-forge", "bioconda"]
-platforms = ["linux-64", "osx-64", "osx-arm64"]
+# stringdecomposer (bioconda) ships linux-64 only — restricting platforms to match
+# (mirrors the standalone pipeline's original env, which was also linux-64-only).
+platforms = ["linux-64"]
 
 [dependencies]
 # Every tool here was confirmed via `pixi search` during preflight (status: found

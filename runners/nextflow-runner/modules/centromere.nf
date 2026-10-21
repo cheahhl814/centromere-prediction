@@ -11,10 +11,10 @@ process tidehunter_cluster {
 
   script:
   """
-  pixi run --manifest-path ${projectDir}/../../pixi.toml \\
+  env -u PIXI_IN_SHELL -u PIXI_PROJECT_MANIFEST -u PIXI_ENVIRONMENT_NAME -u PIXI_ENVIRONMENT_PLATFORMS -u PIXI_EXE pixi run --manifest-path ${projectDir}/../../pixi.toml \\
     TideHunter -p 50 -P 250 -c 5 -t ${task.cpus} ${reads} > consensus_raw.fasta
 
-  pixi run --manifest-path ${projectDir}/../../pixi.toml \\
+  env -u PIXI_IN_SHELL -u PIXI_PROJECT_MANIFEST -u PIXI_ENVIRONMENT_NAME -u PIXI_ENVIRONMENT_PLATFORMS -u PIXI_EXE pixi run --manifest-path ${projectDir}/../../pixi.toml \\
     cd-hit-est -i consensus_raw.fasta -o consensus_clustered.fasta -c 0.8 -n 5 -T ${task.cpus} -M 8000 -d 0 -sc 1 -sf 1
   """
 }
@@ -34,7 +34,7 @@ process trf_density {
 
   script:
   """
-  pixi run --manifest-path ${projectDir}/../../pixi.toml \
+  env -u PIXI_IN_SHELL -u PIXI_PROJECT_MANIFEST -u PIXI_ENVIRONMENT_NAME -u PIXI_ENVIRONMENT_PLATFORMS -u PIXI_EXE pixi run --manifest-path ${projectDir}/../../pixi.toml \
     trf ${assembly} 2 7 7 80 10 50 250 -f -d -m -ngs -h > assembly.trf.dat 2>/dev/null || true
 
   awk '/^@/ { seqname = substr(\$1, 2); next }
@@ -54,12 +54,12 @@ process trf_density {
       if (period >= pmin && period <= pmax && copies >= 5) print
   }' all_repeats.bed > centromere_candidate_repeats.bed
 
-  pixi run --manifest-path ${projectDir}/../../pixi.toml samtools faidx ${assembly}
+  env -u PIXI_IN_SHELL -u PIXI_PROJECT_MANIFEST -u PIXI_ENVIRONMENT_NAME -u PIXI_ENVIRONMENT_PLATFORMS -u PIXI_EXE pixi run --manifest-path ${projectDir}/../../pixi.toml samtools faidx ${assembly}
   cut -f1,2 ${assembly}.fai > genome.sizes
 
-  pixi run --manifest-path ${projectDir}/../../pixi.toml \
+  env -u PIXI_IN_SHELL -u PIXI_PROJECT_MANIFEST -u PIXI_ENVIRONMENT_NAME -u PIXI_ENVIRONMENT_PLATFORMS -u PIXI_EXE pixi run --manifest-path ${projectDir}/../../pixi.toml \
     bedtools makewindows -g genome.sizes -w 100000 > windows_100kb.bed
-  pixi run --manifest-path ${projectDir}/../../pixi.toml \
+  env -u PIXI_IN_SHELL -u PIXI_PROJECT_MANIFEST -u PIXI_ENVIRONMENT_NAME -u PIXI_ENVIRONMENT_PLATFORMS -u PIXI_EXE pixi run --manifest-path ${projectDir}/../../pixi.toml \
     bedtools coverage -a windows_100kb.bed -b centromere_candidate_repeats.bed > centromere_density_100kb.bed
   """
 }
@@ -86,7 +86,10 @@ process identify_regions {
 process stringdecomposer {
   tag "${scaffold}"
   label 'centromere'
-  publishDir "${launchDir}/results/centromere/stringdecomposer/${scaffold}", mode: 'copy', overwrite: false
+  // Closure form is required under the strict-DSL parser (Nextflow 24+): the
+  // bare string was evaluated at process-definition time and failed with
+  // "No such property: scaffold for class: ProcessDslV1".
+  publishDir path: { "${launchDir}/results/centromere/stringdecomposer/${scaffold}" }, mode: 'copy', overwrite: false
 
   input:
   tuple val(scaffold), val(region_str), path(monomers)
@@ -98,9 +101,9 @@ process stringdecomposer {
 
   script:
   """
-  pixi run --manifest-path ${projectDir}/../../pixi.toml \
+  env -u PIXI_IN_SHELL -u PIXI_PROJECT_MANIFEST -u PIXI_ENVIRONMENT_NAME -u PIXI_ENVIRONMENT_PLATFORMS -u PIXI_EXE pixi run --manifest-path ${projectDir}/../../pixi.toml \
     samtools faidx ${assembly} "${region_str}" > ${scaffold}_centromere.fa
-  pixi run --manifest-path ${projectDir}/../../pixi.toml \
+  env -u PIXI_IN_SHELL -u PIXI_PROJECT_MANIFEST -u PIXI_ENVIRONMENT_NAME -u PIXI_ENVIRONMENT_PLATFORMS -u PIXI_EXE pixi run --manifest-path ${projectDir}/../../pixi.toml \
     stringdecomposer ${scaffold}_centromere.fa ${monomers} -t ${task.cpus} -o decomposition_dir > decomposition.tsv
   """
 }
@@ -118,7 +121,7 @@ process centromere_summary {
 
   script:
   """
-  pixi run --manifest-path ${projectDir}/../../pixi.toml \
+  env -u PIXI_IN_SHELL -u PIXI_PROJECT_MANIFEST -u PIXI_ENVIRONMENT_NAME -u PIXI_ENVIRONMENT_PLATFORMS -u PIXI_EXE pixi run --manifest-path ${projectDir}/../../pixi.toml \
     bedtools sort -i ${repeats_bed} > centromere_repeats_sorted.bed
   awk 'BEGIN{OFS="\\t"}
        { count[\$1]++; if(!start[\$1] || \$2<start[\$1]) start[\$1]=\$2; if(\$3>end[\$1]) end[\$1]=\$3 }
