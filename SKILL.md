@@ -14,6 +14,9 @@ triggers:
   - "centromere candidates"
   - "betta centromere"
   - "check centromere results"
+skills:
+  - "read-qc-trimming"
+  - "bacterial-genome-analysis"
 ---
 
 # nf-centromere-agents — Centromere Annotation & Analysis
