@@ -1,0 +1,133 @@
+<!--
+design-pack · svg-library · metro-map (adapted: centromere-prediction)
+  Three section panels; a two-route bundle (teal TideHunter+cd-hit-est monomers, amber
+  TRF+bedtools density windows) that splits and re-merges; capsules = both routes pass,
+  circles = single route; dotted green optional chartz spur ending in an HTML file.
+  Outputs are CANDIDATE regions, not proven centromeres. No ids/markers; tokens only.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Centromere prediction metro map: trimmed ONT reads (FASTQ) and an assembly (FASTA) pass preflight and environment solve, then two parallel routes scan for repeats (TideHunter plus cd-hit-est consensus monomers; TRF plus bedtools density windows), candidate regions are identified and decomposed per scaffold with stringdecomposer into a TSV summary, Markdown report and FASTA, with an optional chartz HTML charts spur" style="width:100%;height:auto">
+<title>Centromere prediction metro map</title>
+<g>
+<rect x="16" y="70" width="204" height="220" rx="14" style="fill:color-mix(in srgb, var(--text-muted,#64748b) 7%, var(--surface,#ffffff));stroke:var(--border,#e2e8f0);stroke-width:1.5"/>
+<circle cx="27" cy="53" r="11" style="fill:var(--text,#0f172a)"/>
+<text x="27" y="57.5" text-anchor="middle" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:13px;font-weight:700;fill:var(--surface,#ffffff)">1</text>
+<text x="46" y="58.5" text-anchor="start" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:16px;font-weight:600;fill:var(--text,#0f172a)">Preflight &amp; env</text>
+<rect x="232" y="70" width="242" height="220" rx="14" style="fill:color-mix(in srgb, var(--text-muted,#64748b) 7%, var(--surface,#ffffff));stroke:var(--border,#e2e8f0);stroke-width:1.5"/>
+<circle cx="243" cy="53" r="11" style="fill:var(--text,#0f172a)"/>
+<text x="243" y="57.5" text-anchor="middle" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:13px;font-weight:700;fill:var(--surface,#ffffff)">2</text>
+<text x="262" y="58.5" text-anchor="start" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:16px;font-weight:600;fill:var(--text,#0f172a)">Monomer &amp; repeat scan</text>
+<rect x="486" y="70" width="298" height="220" rx="14" style="fill:color-mix(in srgb, var(--text-muted,#64748b) 7%, var(--surface,#ffffff));stroke:var(--border,#e2e8f0);stroke-width:1.5"/>
+<circle cx="497" cy="53" r="11" style="fill:var(--text,#0f172a)"/>
+<text x="497" y="57.5" text-anchor="middle" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:13px;font-weight:700;fill:var(--surface,#ffffff)">3</text>
+<text x="516" y="58.5" text-anchor="start" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:16px;font-weight:600;fill:var(--text,#0f172a)">Region &amp; decomposition</text>
+</g>
+<g>
+<path d="M 655 190 V 327 Q 655 345 637 345 H 474" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 7" style="stroke:var(--green,#10b981);stroke-width:5"/>
+</g>
+<g>
+<path d="M 76 175 H 236 C 252 175 252 112 268 112 H 425 C 441 112 441 175 457 175 H 721" fill="none" stroke-linecap="round" stroke-linejoin="round" style="stroke:var(--teal,#0d9488);stroke-width:4"/>
+<path d="M 76 185 H 236 C 252 185 252 226 268 226 H 425 C 441 226 441 185 457 185 H 721" fill="none" stroke-linecap="round" stroke-linejoin="round" style="stroke:var(--amber,#f59e0b);stroke-width:4"/>
+</g>
+<g>
+<rect x="69" y="112" width="6" height="136" rx="1.5" style="fill:var(--text,#0f172a)"/>
+<path d="M 30 106 H 52 L 62 116 V 146 H 30 Z" transform="translate(4 5)" style="fill:color-mix(in srgb, var(--text,#0f172a) 22%, transparent);stroke:color-mix(in srgb, var(--text,#0f172a) 45%, transparent);stroke-width:1.5"/>
+<path d="M 30 106 H 52 L 62 116 V 146 H 30 Z" stroke-linejoin="round" style="fill:var(--surface,#ffffff);stroke:var(--text,#0f172a);stroke-width:2"/>
+<path d="M 52 106 V 116 H 62" fill="none" stroke-linejoin="round" style="stroke:var(--text,#0f172a);stroke-width:2"/>
+<rect x="24" y="121" width="44" height="15" rx="3" style="fill:var(--text,#0f172a)"/>
+<text x="46" y="132.5" text-anchor="middle" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:11px;font-weight:700;fill:var(--surface,#ffffff)">FASTQ</text>
+<path d="M 30 214 H 52 L 62 224 V 254 H 30 Z" transform="translate(4 5)" style="fill:color-mix(in srgb, var(--text,#0f172a) 22%, transparent);stroke:color-mix(in srgb, var(--text,#0f172a) 45%, transparent);stroke-width:1.5"/>
+<path d="M 30 214 H 52 L 62 224 V 254 H 30 Z" stroke-linejoin="round" style="fill:var(--surface,#ffffff);stroke:var(--text,#0f172a);stroke-width:2"/>
+<path d="M 52 214 V 224 H 62" fill="none" stroke-linejoin="round" style="stroke:var(--text,#0f172a);stroke-width:2"/>
+<rect x="24" y="229" width="44" height="15" rx="3" style="fill:var(--text,#0f172a)"/>
+<text x="46" y="240.5" text-anchor="middle" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:11px;font-weight:700;fill:var(--surface,#ffffff)">FASTA</text>
+<rect x="719" y="95" width="6" height="170" rx="1.5" style="fill:var(--text,#0f172a)"/>
+<path d="M 738 88 H 760 L 770 98 V 128 H 738 Z" transform="translate(4 5)" style="fill:color-mix(in srgb, var(--text,#0f172a) 22%, transparent);stroke:color-mix(in srgb, var(--text,#0f172a) 45%, transparent);stroke-width:1.5"/>
+<path d="M 738 88 H 760 L 770 98 V 128 H 738 Z" stroke-linejoin="round" style="fill:var(--surface,#ffffff);stroke:var(--text,#0f172a);stroke-width:2"/>
+<path d="M 760 88 V 98 H 770" fill="none" stroke-linejoin="round" style="stroke:var(--text,#0f172a);stroke-width:2"/>
+<rect x="732" y="103" width="44" height="15" rx="3" style="fill:var(--text,#0f172a)"/>
+<text x="754" y="114.5" text-anchor="middle" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:11px;font-weight:700;fill:var(--surface,#ffffff)">TSV</text>
+<path d="M 738 160 H 760 L 770 170 V 200 H 738 Z" transform="translate(4 5)" style="fill:color-mix(in srgb, var(--text,#0f172a) 22%, transparent);stroke:color-mix(in srgb, var(--text,#0f172a) 45%, transparent);stroke-width:1.5"/>
+<path d="M 738 160 H 760 L 770 170 V 200 H 738 Z" stroke-linejoin="round" style="fill:var(--surface,#ffffff);stroke:var(--text,#0f172a);stroke-width:2"/>
+<path d="M 760 160 V 170 H 770" fill="none" stroke-linejoin="round" style="stroke:var(--text,#0f172a);stroke-width:2"/>
+<rect x="732" y="175" width="44" height="15" rx="3" style="fill:var(--text,#0f172a)"/>
+<text x="754" y="186.5" text-anchor="middle" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:11px;font-weight:700;fill:var(--surface,#ffffff)">MD</text>
+<path d="M 738 232 H 760 L 770 242 V 272 H 738 Z" transform="translate(4 5)" style="fill:color-mix(in srgb, var(--text,#0f172a) 22%, transparent);stroke:color-mix(in srgb, var(--text,#0f172a) 45%, transparent);stroke-width:1.5"/>
+<path d="M 738 232 H 760 L 770 242 V 272 H 738 Z" stroke-linejoin="round" style="fill:var(--surface,#ffffff);stroke:var(--text,#0f172a);stroke-width:2"/>
+<path d="M 760 232 V 242 H 770" fill="none" stroke-linejoin="round" style="stroke:var(--text,#0f172a);stroke-width:2"/>
+<rect x="732" y="247" width="44" height="15" rx="3" style="fill:var(--text,#0f172a)"/>
+<text x="754" y="258.5" text-anchor="middle" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:11px;font-weight:700;fill:var(--surface,#ffffff)">FASTA</text>
+<rect x="481" y="327" width="6" height="26" rx="1.5" style="fill:var(--text,#0f172a)"/>
+<path d="M 498 325 H 520 L 530 335 V 365 H 498 Z" transform="translate(4 5)" style="fill:color-mix(in srgb, var(--text,#0f172a) 22%, transparent);stroke:color-mix(in srgb, var(--text,#0f172a) 45%, transparent);stroke-width:1.5"/>
+<path d="M 498 325 H 520 L 530 335 V 365 H 498 Z" stroke-linejoin="round" style="fill:var(--surface,#ffffff);stroke:var(--text,#0f172a);stroke-width:2"/>
+<path d="M 520 325 V 335 H 530" fill="none" stroke-linejoin="round" style="stroke:var(--text,#0f172a);stroke-width:2"/>
+<rect x="492" y="340" width="44" height="15" rx="3" style="fill:var(--text,#0f172a)"/>
+<text x="514" y="351.5" text-anchor="middle" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:11px;font-weight:700;fill:var(--surface,#ffffff)">HTML</text>
+</g>
+<g>
+<rect x="121" y="165" width="10" height="30" rx="5" style="fill:var(--surface,#ffffff);stroke:var(--text,#0f172a);stroke-width:2"/>
+<rect x="179" y="165" width="10" height="30" rx="5" style="fill:var(--surface,#ffffff);stroke:var(--text,#0f172a);stroke-width:2"/>
+<rect x="520" y="165" width="10" height="30" rx="5" style="fill:var(--surface,#ffffff);stroke:var(--text,#0f172a);stroke-width:2"/>
+<rect x="585" y="165" width="10" height="30" rx="5" style="fill:var(--surface,#ffffff);stroke:var(--text,#0f172a);stroke-width:2"/>
+<rect x="650" y="165" width="10" height="30" rx="5" style="fill:var(--surface,#ffffff);stroke:var(--text,#0f172a);stroke-width:2"/>
+<circle cx="308" cy="112" r="6" style="fill:var(--surface,#ffffff);stroke:var(--text,#0f172a);stroke-width:2.5"/>
+<circle cx="415" cy="112" r="6" style="fill:var(--surface,#ffffff);stroke:var(--text,#0f172a);stroke-width:2.5"/>
+<circle cx="308" cy="226" r="6" style="fill:var(--surface,#ffffff);stroke:var(--text,#0f172a);stroke-width:2.5"/>
+<circle cx="415" cy="226" r="6" style="fill:var(--surface,#ffffff);stroke:var(--text,#0f172a);stroke-width:2.5"/>
+<circle cx="600" cy="345" r="6" style="fill:var(--surface,#ffffff);stroke:var(--text,#0f172a);stroke-width:2.5"/>
+</g>
+<g>
+<text x="126" y="155" text-anchor="middle" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:12px;font-weight:600;fill:var(--text,#0f172a)">Input validation</text>
+<text x="126" y="141" text-anchor="middle" style="font-family:var(--font-sans,ui-sans-serif,system-ui);font-size:11px;font-weight:400;fill:var(--text-muted,#64748b)">reads, records</text>
+<text x="216" y="214" text-anchor="end" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:12px;font-weight:600;fill:var(--text,#0f172a)">Tool env solve</text>
+<text x="216" y="228" text-anchor="end" style="font-family:var(--font-sans,ui-sans-serif,system-ui);font-size:11px;font-weight:400;fill:var(--text-muted,#64748b)">pixi.toml dry-run</text>
+<text x="24" y="278" text-anchor="start" style="font-family:var(--font-sans,ui-sans-serif,system-ui);font-size:11px;font-weight:400;fill:var(--text-muted,#64748b)">pixi run manifest</text>
+<text x="308" y="98" text-anchor="middle" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:12px;font-weight:600;fill:var(--text,#0f172a)">TideHunter</text>
+<text x="308" y="130" text-anchor="middle" style="font-family:var(--font-sans,ui-sans-serif,system-ui);font-size:11px;font-weight:400;fill:var(--text-muted,#64748b)">-p 50 -P 250 -c 5</text>
+<text x="415" y="98" text-anchor="middle" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:12px;font-weight:600;fill:var(--text,#0f172a)">cd-hit-est</text>
+<text x="415" y="130" text-anchor="middle" style="font-family:var(--font-sans,ui-sans-serif,system-ui);font-size:11px;font-weight:400;fill:var(--text-muted,#64748b)">-c 0.8</text>
+<text x="345" y="152" text-anchor="middle" style="font-family:var(--font-sans,ui-sans-serif,system-ui);font-size:11px;font-weight:400;fill:var(--text-muted,#64748b)">→ consensus monomers (FASTA)</text>
+<text x="308" y="248" text-anchor="middle" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:12px;font-weight:600;fill:var(--text,#0f172a)">TRF</text>
+<text x="308" y="262" text-anchor="middle" style="font-family:var(--font-sans,ui-sans-serif,system-ui);font-size:11px;font-weight:400;fill:var(--text-muted,#64748b)">2 7 7 80 10 50 250 …</text>
+<text x="415" y="248" text-anchor="middle" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:12px;font-weight:600;fill:var(--text,#0f172a)">bedtools</text>
+<text x="415" y="262" text-anchor="middle" style="font-family:var(--font-sans,ui-sans-serif,system-ui);font-size:11px;font-weight:400;fill:var(--text-muted,#64748b)">100 kb windows</text>
+<text x="345" y="278" text-anchor="middle" style="font-family:var(--font-sans,ui-sans-serif,system-ui);font-size:11px;font-weight:400;fill:var(--text-muted,#64748b)">→ density windows (BED)</text>
+<text x="361" y="184" text-anchor="middle" style="font-family:var(--font-sans,ui-sans-serif,system-ui);font-size:11px;font-weight:400;fill:var(--text-muted,#64748b)">pixi run --manifest-path</text>
+<text x="525" y="155" text-anchor="middle" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:12px;font-weight:600;fill:var(--text,#0f172a)">identify_regions</text>
+<text x="525" y="141" text-anchor="middle" style="font-family:var(--font-sans,ui-sans-serif,system-ui);font-size:11px;font-weight:400;fill:var(--text-muted,#64748b)">top-10 windows</text>
+<text x="590" y="214" text-anchor="middle" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:12px;font-weight:600;fill:var(--text,#0f172a)">stringdecomposer</text>
+<text x="590" y="228" text-anchor="middle" style="font-family:var(--font-sans,ui-sans-serif,system-ui);font-size:11px;font-weight:400;fill:var(--text-muted,#64748b)">once per scaffold</text>
+<text x="655" y="155" text-anchor="middle" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:12px;font-weight:600;fill:var(--text,#0f172a)">centromere_summary</text>
+<text x="655" y="141" text-anchor="middle" style="font-family:var(--font-sans,ui-sans-serif,system-ui);font-size:11px;font-weight:400;fill:var(--text-muted,#64748b)">per-scaffold TSV</text>
+<text x="598" y="334" text-anchor="start" transform="rotate(-28 598 334)" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:12px;font-weight:600;fill:var(--text,#0f172a)">chartz viz</text>
+<text x="514" y="388" text-anchor="middle" style="font-family:var(--font-sans,ui-sans-serif,system-ui);font-size:11px;font-weight:400;fill:var(--text-muted,#64748b)">n_repeats / density charts</text>
+<text x="754" y="141" text-anchor="middle" style="font-family:var(--font-sans,ui-sans-serif,system-ui);font-size:10px;font-weight:400;fill:var(--text-muted,#64748b)">summary.tsv</text>
+<text x="754" y="213" text-anchor="middle" style="font-family:var(--font-sans,ui-sans-serif,system-ui);font-size:10px;font-weight:400;fill:var(--text-muted,#64748b)">report.md</text>
+<text x="752" y="285" text-anchor="middle" style="font-family:var(--font-sans,ui-sans-serif,system-ui);font-size:10px;font-weight:400;fill:var(--text-muted,#64748b)">scaffold.fa</text>
+<text x="784" y="436" text-anchor="end" style="font-family:var(--font-sans,ui-sans-serif,system-ui);font-size:11px;font-weight:400;fill:var(--text-muted,#64748b)">Outputs are candidate regions, not proven centromeres</text>
+</g>
+<g>
+<text x="24" y="312" text-anchor="start" letter-spacing="1.2" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:11px;font-weight:700;fill:var(--text-muted,#64748b)">ROUTES</text>
+<path d="M 26 330 H 54" fill="none" stroke-linecap="round" stroke-linejoin="round" style="stroke:var(--teal,#0d9488);stroke-width:4"/>
+<text x="64" y="334" text-anchor="start" style="font-family:var(--font-sans,ui-sans-serif,system-ui);font-size:12px;font-weight:400;fill:var(--text,#0f172a)">TideHunter + cd-hit-est</text>
+<path d="M 26 352 H 54" fill="none" stroke-linecap="round" stroke-linejoin="round" style="stroke:var(--amber,#f59e0b);stroke-width:4"/>
+<text x="64" y="356" text-anchor="start" style="font-family:var(--font-sans,ui-sans-serif,system-ui);font-size:12px;font-weight:400;fill:var(--text,#0f172a)">TRF + bedtools</text>
+<path d="M 26 374 H 54" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 7" style="stroke:var(--green,#10b981);stroke-width:5"/>
+<text x="64" y="378" text-anchor="start" style="font-family:var(--font-sans,ui-sans-serif,system-ui);font-size:12px;font-weight:400;fill:var(--text,#0f172a)">optional: chartz viz</text>
+<text x="250" y="312" text-anchor="start" letter-spacing="1.2" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:11px;font-weight:700;fill:var(--text-muted,#64748b)">STATIONS</text>
+<rect x="250" y="320" width="10" height="20" rx="5" style="fill:var(--surface,#ffffff);stroke:var(--text,#0f172a);stroke-width:2"/>
+<text x="270" y="334" text-anchor="start" style="font-family:var(--font-sans,ui-sans-serif,system-ui);font-size:12px;font-weight:400;fill:var(--text,#0f172a)">capsule: trunk, both routes</text>
+<circle cx="255" cy="351" r="6" style="fill:var(--surface,#ffffff);stroke:var(--text,#0f172a);stroke-width:2.5"/>
+<text x="270" y="356" text-anchor="start" style="font-family:var(--font-sans,ui-sans-serif,system-ui);font-size:12px;font-weight:400;fill:var(--text,#0f172a)">circle: single-route step</text>
+<text x="250" y="384" text-anchor="start" letter-spacing="1.2" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:11px;font-weight:700;fill:var(--text-muted,#64748b)">FILE TAGS</text>
+<rect x="250" y="392" width="38" height="14" rx="3" style="fill:var(--text,#0f172a)"/>
+<text x="269" y="402.5" text-anchor="middle" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:10px;font-weight:700;fill:var(--surface,#ffffff)">FASTQ</text>
+<rect x="292" y="392" width="38" height="14" rx="3" style="fill:var(--text,#0f172a)"/>
+<text x="311" y="402.5" text-anchor="middle" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:10px;font-weight:700;fill:var(--surface,#ffffff)">FASTA</text>
+<rect x="334" y="392" width="38" height="14" rx="3" style="fill:var(--text,#0f172a)"/>
+<text x="353" y="402.5" text-anchor="middle" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:10px;font-weight:700;fill:var(--surface,#ffffff)">TSV</text>
+<rect x="376" y="392" width="38" height="14" rx="3" style="fill:var(--text,#0f172a)"/>
+<text x="395" y="402.5" text-anchor="middle" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:10px;font-weight:700;fill:var(--surface,#ffffff)">MD</text>
+<rect x="418" y="392" width="38" height="14" rx="3" style="fill:var(--text,#0f172a)"/>
+<text x="437" y="402.5" text-anchor="middle" style="font-family:var(--font-head,ui-sans-serif,system-ui);font-size:10px;font-weight:700;fill:var(--surface,#ffffff)">HTML</text>
+</g>
+</svg>
