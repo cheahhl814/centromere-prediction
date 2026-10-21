@@ -1,0 +1,41 @@
+{
+  "skill_name": "nf-centromere-agents",
+  "skill_title": "nf-centromere-agents — Centromere Annotation & Analysis",
+  "skill_description": "Centromere annotation and analysis for ONT-based fish genome assemblies (Betta_v3 / nf-betta output). Discovers tandem-repeat monomers from reads (TideHunter + cd-hit-est), maps them onto the assembly (TRF + bedtools density windows), picks the highest-density region per scaffold, decomposes each region into monomers (stringDecomposer), and produces a per-scaffold summary. BettaMt-convention meta-skill wrapping the standalone nf-centromere-agents Nextflow DSL2 pipeline.",
+  "skill_version": "1.0.0",
+  "skill_updated": "2026-10-21",
+  "skill_triggers": ["centromere", "centromere analysis", "find centromeres", "centromere annotation", "TideHunter", "TRF density", "stringdecomposer", "centromere candidates", "betta centromere", "check centromere results"],
+  "run_dir": "/home/cheahhl814/claude_workspace/bioinformatics/AIx-BIO/skills/nf-centromere-agents",
+  "skills_root": "/home/cheahhl814/claude_workspace/bioinformatics/AIx-BIO/skills",
+  "github_org": "cheahhl814",
+  "github_repo": "github.com/cheahhl814/nf-centromere-agents",
+  "skill_shape": "multi-tool-pipeline",
+  "profile": "bioinfo",
+  "sub_skills": ["preflight", "run", "qc", "debug"],
+  "tool_inventory": [
+    {"name": "tidehunter", "version": ">=1.5.5", "role": "monomer discovery from reads", "status": "found"},
+    {"name": "trf", "version": ">=4.09.1", "role": "tandem repeat mapping on assembly", "status": "found"},
+    {"name": "cd-hit", "version": ">=4.8.1,<5", "role": "monomer consensus clustering", "status": "found"},
+    {"name": "samtools", "version": ">=1.19", "role": "faidx extraction + genome sizes", "status": "found"},
+    {"name": "bedtools", "version": ">=2.31", "role": "density windows + coverage + summary", "status": "found"},
+    {"name": "stringdecomposer", "version": ">=1.1.2", "role": "monomer decomposition of candidate regions", "status": "found"},
+    {"name": "nextflow", "version": ">=23.10", "role": "pipeline runtime (DSL2)", "status": "found"}
+  ],
+  "pixi_available": true,
+  "git_initialized": false,
+  "disk_gb_free": 61,
+  "target_tiers": ["large"],
+  "input_formats": ["fastq", "fasta"],
+  "with_nextflow_runner": true,
+  "nextflow_runner": {
+    "single_isolate_mode": "yes",
+    "cohort_mode": "n/a (per-assembly pipeline, runs after each Betta_v3 species run)",
+    "ci_test_command": "nextflow run runners/nextflow-runner/main.nf -profile test -stub-run"
+  },
+  "rebuild_source": "/home/cheahhl814/claude_workspace/bioinformatics/AIx-BIO/skills/nf-centromere-agents.zip",
+  "upstream_bugs_fixed_in_source": 5,
+  "pixi_channels": ["conda-forge", "bioconda"],
+  "verdict": "GO",
+  "warnings": [],
+  "generated": "2026-10-21T12:27:00+08:00"
+}

@@ -1,0 +1,4 @@
+{
+  "reads": "/home/mumgp/hdd2/Parosphromenus_rubrimontis/qc/nf-qc-run/results/trim/Parosphromenus_rubrimontis_trimmed.fastq.gz",
+  "assembly": "/home/mumgp/hdd2/Parosphromenus_rubrimontis/wgs/results/polish/polish/ntLink_scaffolds_polish.fasta"
+}

@@ -1,0 +1,40 @@
+[workspace]
+name = "nf-centromere-agents"
+version = "1.0.0"
+description = "Centromere annotation and analysis for ONT-based fish genome assemblies — TideHunter monomers, TRF density, stringDecomposer"
+channels = ["conda-forge", "bioconda"]
+platforms = ["linux-64", "osx-64", "osx-arm64"]
+
+[dependencies]
+# Every tool here was confirmed via `pixi search` during preflight (status: found
+# in params.json) and co-solves in the default env (preflight step 2h joint solve).
+tidehunter = ">=1.5.5"
+trf = ">=4.09.1"
+cd-hit = ">=4.8.1,<5"
+samtools = ">=1.19"
+bedtools = ">=2.31"
+stringdecomposer = ">=1.1.2"
+python = ">=3.10"
+
+# Nextflow lives in its own isolated env (no-default-feature): the DSL2 runner is
+# optional for single-assembly use, and the java dependency is heavy. Solve on
+# demand with `pixi run -e nextflow nextflow ...`. See runners/README.md.
+[feature.nextflow.dependencies]
+nextflow = ">=23.10"
+
+[tasks]
+# Phase entry points. Each phase's real commands live in the matching
+# sub-skill SKILL.md (preflight/run-preflight, run/pipeline-run, ...).
+# `pixi env run` variants: prefix with `pixi run -e nextflow` for the runner.
+preflight = "echo 'Run the centromere preflight — see preflight/run-preflight/SKILL.md'"
+run = "echo 'Run the nf-centromere-agents workflow — see run/pipeline-run/SKILL.md'"
+qc = "echo 'Build centromere_report.md from results/centromere/ — see qc/results-qc/SKILL.md'"
+debug = "echo 'Interpret a failed run — see debug/run-debug/SKILL.md'"
+# Dry-run the whole environment solve (the battle-test gate; also a good smoke test)
+lock-check = "pixi lock --dry-run"
+# Self-check: compares this skill's git SHA to upstream (github.com/cheahhl814/nf-centromere-agents).
+# See bin/skill-update-check.py for the verdict legend (UP-TO-DATE / BEHIND-BY-N / OFFLINE).
+update-check = "python3 bin/skill-update-check.py"
+
+[environments]
+nextflow = { features = ["nextflow"], no-default-feature = true }
