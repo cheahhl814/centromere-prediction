@@ -16,7 +16,7 @@ triggers:
   - "check centromere results"
 skills:
   - "read-qc-trimming"
-  - "bacterial-genome-analysis"
+  - "chartz"
 ---
 
 # nf-centromere-agents — Centromere Annotation & Analysis

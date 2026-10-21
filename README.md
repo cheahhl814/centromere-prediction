@@ -46,6 +46,13 @@ pixi run -e nextflow nextflow -version   # optional isolated runner env
 Nextflow ≥ 23.10 required — on PATH, or materialize the isolated env:
 `pixi run -e nextflow nextflow`.
 
+**Agent-skill wiring** (hard deps, declared in `SKILL.md` frontmatter `skills:`):
+upstream `read-qc-trimming` (trimmed nuclear reads input) and `chartz`
+(post-QC visualisation of centromere evidence — e.g. `n_repeats` per scaffold from
+`centromere_summary.tsv`, or repeat-density profiles). No database download:
+all 6 tools consume only user-supplied files; the only network activity is pixi
+package installation on first use (tool binaries, not reference databases).
+
 ## Usage
 
 ### Natural-language triggers

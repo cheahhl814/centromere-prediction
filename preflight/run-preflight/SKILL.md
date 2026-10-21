@@ -24,12 +24,11 @@ triggers:
 
 Upstream skills that produce these inputs (declared as `skills:` deps in the master frontmatter):
 
-- **`read-qc-trimming`** → trimmed nuclear reads (e.g. `qc/nf-qc-run/results/trim/<species>_trimmed.fastq.gz`). If the user offers raw reads without trimming, route there first; mtDNA/organellar tandem repeats in untrimmed raw reads pollute the monomer set.
-- **`bacterial-genome-analysis`** → polished/scaffolded assembly (e.g. `wgs/results/polish/polish/ntLink_scaffolds_polish.fasta`). If the user offers a draft-contig assembly, warn at SP2 (fragmented candidates) and proceed — do NOT auto-chain a full assembly run.
+- **`read-qc-trimming`** → trimmed nuclear reads (e.g. `qc/nf-qc-run/results/trim/<species>_trimmed.fastq.gz`). If the user offers raw reads without trimming, route there first; mtDNA/organellar tandem repeats in untrimmed raw reads pollute the monomer set. (The assembly input comes from whatever upstream WGS/pipeline run the user has — no assembly-building skill is hard-wired.)
+- **`chartz`** → after the QC sub-skill's interpretation, when the user wants visualisation of the centromere evidence (e.g. a bar chart of `n_repeats` per scaffold from `centromere_summary.tsv`, or repeat-density profile plots from `centromere_density_100kb.bed`). Hard-wired: QC always offers it; every plotted value is a named column of the existing results files.
 
 Downstream skills (prose only — not hard wiring):
 - `ena-submit` — if the user wants to publish the assembly, not the centromere outputs.
-- `chartz` — optional visualisation of the density windows or n_repeats per scaffold.
 
 Refuse to proceed (and route the user back) if the analysis `RUN_DIR` is not writable or both input paths are unresolved.
 
