@@ -1,8 +1,8 @@
 ---
 name: centromere-prediction-run-preflight
 description: 'Phase 1 of centromere-prediction: validate centromere run inputs (reads FASTQ/FASTA + assembly FASTA), verify the pixi tool env solves, check the helper script and Nextflow availability, and write the run params.json + preflight verdict (GO / GO-WITH-WARNINGS / NO-GO). Use when starting a centromere analysis, after locating trimmed nuclear reads and a polished assembly, or before invoking the centromere run sub-skill.'
-version: 1.0.0
-updated: "2026-10-21"
+version: 1.1.0
+updated: "2026-11-03"
 triggers:
   - "centromere preflight"
   - "validate centromere inputs"
@@ -37,6 +37,8 @@ Refuse to proceed (and route the user back) if the analysis `RUN_DIR` is not wri
 - **SP1 — Input provenance ambiguous**: reads could be raw ONT reads vs trimmed nuclear reads vs mtDNA-unfiltered. Evidence + Recommend + Options: recommend trimmed nuclear reads (`qc/nf-qc-run/results/trim/<species>_trimmed.fastq.gz` style); accept raw reads only with a warning that mtDNA/organellar tandem repeats pollute the monomer set.
 - **SP2 — Assembly vintage**: polished+scaffolded assembly preferred; a draft/contig-level assembly fragments candidates (see QC red flags). Warn, allow proceed.
 
+- **SP3 — Read depth**: ONT nuclear reads are usually far deeper than monomer discovery needs. Recommend a random subsample to ~10–25x (`seqkit sample -p <p> -s 11`): it cuts TideHunter run time and disk use with the same monomers. Estimate bases ≈ 0.5 × FASTQ bytes (e.g. a 73 GB FASTQ ≈ 36 Gb ≈ 76x on a 478 Mb genome → p ≈ 0.16 for ~12x), then confirm with `seqkit stats` on the subsample. Record the subsample (fraction, seed) in `preflight_passed.md`.
+
 ## Procedure
 
 ```bash
@@ -62,9 +64,14 @@ command -v nextflow >/dev/null 2>&1 || pixi run -e nextflow nextflow -version
 test -x "$SKILL_ROOT/bin/extract_candidate_region.sh"
 test -f "$SKILL_ROOT/runners/nextflow-runner/main.nf"
 
-# 5. Disk: TRF intermediates can reach a few GB on large genomes
+# 5. Disk: TRF intermediates can reach a few GB on large genomes; a subsample / work dir adds the reads' size again
 FREE_GB=$(df --output=avail -BG "$RUN_DIR" | tail -1 | tr -dc '0-9')
 test "$FREE_GB" -ge 5 || echo "WARN: only ${FREE_GB} GB free"
+
+# 5b. stringDecomposer memory guard (measured on B. coccina: ~10 GB at 8 threads, up to 29.6 GB at the
+#     pipeline's 24 threads, for 1 Mb x 100 monomers; cost grows with region length x monomer count and
+#     threads). Defaults (--region_window 1000000 --max_monomers 100) fit the 96 GB label; WARN if the user
+#     raises them: est_GB ~= 30 * (window_bp/1e6) * (max_monomers/100) at 24 threads
 
 # 6. Stale-results guard: publishDir uses overwrite:false
 if [ -d "$RUN_DIR/results/centromere" ]; then
@@ -79,9 +86,15 @@ Then write `params.json` (run contract consumed by the run sub-skill):
   "reads": "<absolute path to reads>",
   "assembly": "<absolute path to assembly>",
   "profile": "local",
-  "skill_root": "<SKILL_ROOT>"
+  "skill_root": "<SKILL_ROOT>",
+  "period_min": 50,
+  "period_max": 250,
+  "region_window": 1000000,
+  "max_monomers": 100
 }
 ```
+
+The last four keys are optional (defaults shown); the run sub-skill forwards them to Nextflow. `period_max` must be ≤ 2000 (TRF limit); use 2000 for the second, wide pass.
 
 ...and `preflight_passed.md` with a verdict table (inputs / env / runtime / disk / stale-results → `GO` | `GO-WITH-WARNINGS` | `NO-GO`). Never run with a `NO-GO`.
 
@@ -94,3 +107,4 @@ Then write `params.json` (run contract consumed by the run sub-skill):
 | Reads are FASTA but named `.fastq.gz` | mislabeled input | Inspect first bytes (`zcat \| head -1`); fix the params path, not the file. |
 | Assembly has 0 or 1 record | wrong file (contigs vs scaffolds confusion) | Re-locate upstream `ntLink_scaffolds_polish.fasta`; ask user (SP2). |
 | `zcat` fails mid-file (unexpected EOF) | truncated download | Re-fetch the reads from upstream QC outputs; do not proceed. |
+| Reads > ~40x or a FASTQ of tens of GB | far deeper than monomer discovery needs | Offer the SP3 subsample; do not run TideHunter on the full file by default. |

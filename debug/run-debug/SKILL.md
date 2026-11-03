@@ -1,8 +1,8 @@
 ---
 name: centromere-prediction-run-debug
 description: 'Failure interpreter for centromere-prediction: match a failed centromere run (stderr, run log, or weird outputs) against a signature library of known failure patterns — channel semantics, publishDir overwrite:false stale files, -resume gotchas, empty TRF/TideHunter outputs, tool-env gaps, and legacy Betta_v3 quirks — and recommend a concrete fix. Use when a centromere run fails, produces empty or partial outputs, or behaves suspiciously (e.g. stringdecomposer ran for only one scaffold).'
-version: 1.0.0
-updated: "2026-10-21"
+version: 1.1.0
+updated: "2026-11-03"
 triggers:
   - "centromere run failed"
   - "centromere debug"
@@ -30,6 +30,11 @@ triggers:
 
 | Signature in stderr / log | Likely cause | Suggested fix |
 | --- | --- | --- |
+| `stringdecomposer` task `died with <Signals.SIGKILL: 9>` (exit 1, traceback ends in `subprocess.CalledProcessError ... dp`) | out of memory: v1.0.0 aligned a near-whole-scaffold region (merged top-10 span, e.g. 2.6 Mb) to every cd-hit cluster (e.g. 3,017) | v1.1.0 caps both (`--region_window`, `--max_monomers`). If you raised them, estimate ~10 GB (8 threads) to ~30 GB (24 threads) per 1 Mb × 100 monomers and lower them. Check `.command.log` and `dmesg \| grep -i killed`. |
+| `stringdecomposer ... died with <Signals.SIGSEGV: 11>` | zero monomers (TideHunter found nothing, empty `monomers_top.fasta`) | v1.1.0 skips and writes an empty table; fix upstream (reads, `--period_min/--period_max`). |
+| `stringdecomposer/*/decomposition.tsv` holds a few `StringDecomposer - INFO` log lines | v1.0.0 redirected stdout into it and never published `final_decomposition.tsv` | rerun with v1.1.0 (`decomposition.tsv` is the real table); for old runs read `decomposition_dir/final_decomposition.tsv` from the Nextflow work dir. |
+| No monomer or satellite signal on the default run but long satellites are expected | TRF's max period is `--period_max` (default 250), so longer repeats are never reported | rerun with `period_max: 2000` in a new run dir; post-filtering cannot widen it. |
+| `Invalid period range` at startup | `period_max` > 2000 (TRF limit) or `period_min >= period_max` | fix the params. |
 | `centromere` process fails; `.command.err` shows `command not found` for any of TideHunter/TRF/cd-hit/samtools/bedtools/stringdecomposer | pixi env not materialized for the runner's manifest path | `pixi run --manifest-path <skill-root>/pixi.toml <tool> --version`; first materialization needs network; then `nextflow run ... -resume`. |
 | Only `stringdecomposer/<one-scaffold>/` produced output while `candidate_regions.tsv` has many rows | pre-`143a5dc` queue-channel bug (assembly/monomers passed as queue channels) | Verify runner has `Channel.value(file(...))` in `main.nf`; trash stale `results/centromere/stringdecomposer/` (publishDir `overwrite: false` keeps old files silently); run fresh. |
 | `.command.err`: `Error: Could not recognize the command: preview` (old NF versions inverse) or `-dry-run` unknown | Nextflow version mismatch on the preview flag | Nextflow ≥25 uses `-preview`; older uses `-dry-run`. Check `nextflow -version`. |
