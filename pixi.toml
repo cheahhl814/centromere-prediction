@@ -1,6 +1,6 @@
 [workspace]
 name = "centromere-prediction"
-version = "1.0.0"
+version = "1.1.0"
 description = "Centromere annotation and analysis for ONT-based fish genome assemblies — TideHunter monomers, TRF density, stringDecomposer"
 channels = ["conda-forge", "bioconda"]
 # stringdecomposer (bioconda) ships linux-64 only — restricting platforms to match
@@ -16,6 +16,9 @@ cd-hit = ">=4.8.1,<5"
 samtools = ">=1.19"
 bedtools = ">=2.31"
 stringdecomposer = ">=1.1.2"
+# satellite_map.py (BLASTn array mapping) and telomere_crosscheck.py (tidk) — QC steps 6-7
+blast = ">=2.14"
+tidk = ">=0.2.6"
 python = ">=3.10"
 
 # Nextflow lives in its own isolated env (no-default-feature): the DSL2 runner is

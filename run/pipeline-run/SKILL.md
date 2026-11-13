@@ -1,8 +1,8 @@
 ---
 name: centromere-prediction-pipeline-run
 description: 'Phase 2 of centromere-prediction: run the 5-process centromere Nextflow workflow (TideHunter monomer discovery, TRF density, identify_regions, stringdecomposer, centromere_summary) with a dry-run preview, explicit user confirmation, background-execution pattern, and the -resume / publishDir gotchas. Use when preflight passed and the centromere run should be started, resumed, or monitored.'
-version: 1.0.0
-updated: "2026-10-21"
+version: 1.1.0
+updated: "2026-11-03"
 triggers:
   - "run centromere pipeline"
   - "start centromere run"
@@ -25,10 +25,10 @@ Refuse to run if `preflight_passed.md` is missing or its verdict is `NO-GO` — 
 
 | Process | Input | Output | Does |
 |---|---|---|---|
-| `tidehunter_cluster` | reads (fastq) | `tidehunter/consensus_clustered.fasta` | Finds tandem-repeat monomers (period 50–250, `-c 5`), clusters at 80% identity (`cd-hit-est -c 0.8`) |
-| `trf_density` | assembly fasta | `trf/centromere_candidate_repeats.bed`, `trf/centromere_density_100kb.bed`, `trf/genome.sizes` | Runs TRF, keeps repeats with period 50–250 bp and ≥5 copies, computes density in 100 kb windows |
-| `identify_regions` | density bed | `regions/candidate_regions.tsv` | Top-10 density windows per scaffold merged into one candidate region (`bin/extract_candidate_region.sh`) |
-| `stringdecomposer` | tuple(scaffold, region, monomers) + assembly **value** channel | `stringdecomposer/<scaffold>/decomposition.tsv`, `<scaffold>_centromere.fa` | Decomposes each candidate region into monomers |
+| `tidehunter_cluster` | reads (fastq) | `tidehunter/consensus_clustered.fasta`, `monomers_top.fasta`, `monomer_ranking.tsv` | Finds tandem-repeat monomers (`--period_min`–`--period_max`, `-c 5`), clusters at 80% (`cd-hit-est -c 0.8`), ranks clusters by size and keeps the top `--max_monomers` |
+| `trf_density` | assembly fasta | `trf/all_repeats.bed`, `trf/centromere_candidate_repeats.bed`, `trf/centromere_density_100kb.bed`, `trf/genome.sizes` | Runs TRF (max period = `--period_max`), keeps repeats in the period range with ≥ `--min_copies`, computes density in 100 kb windows |
+| `identify_regions` | density bed | `regions/candidate_regions.tsv` | Densest `--region_window` (default 1 Mb) per scaffold (`bin/extract_candidate_region.sh`; window 0 = legacy merged top-10 span) |
+| `stringdecomposer` | tuple(scaffold, region, top monomers) + assembly **value** channel | `stringdecomposer/<scaffold>/decomposition.tsv` (the real table), `stringdecomposer.log`, `<scaffold>_centromere.fa` | Decomposes each candidate region against the capped monomers; skipped (empty table) if there are no monomers |
 | `centromere_summary` | candidate repeats bed | `centromere_summary.tsv` | Per-scaffold start/end/count of candidate repeats |
 
 `tidehunter_cluster` and `trf_density` run in parallel; the rest is sequential. No GPU needed.
@@ -42,9 +42,19 @@ cd "$RUN_DIR"
 python3 - <<'EOF'
 import json
 p = json.load(open("params.json"))
-json.dump({"reads": p["reads"], "assembly": p["assembly"]}, open("centromere_params.json", "w"), indent=2)
+keys = ("reads", "assembly", "period_min", "period_max", "min_copies", "region_window", "max_monomers")
+json.dump({k: p[k] for k in keys if k in p}, open("centromere_params.json", "w"), indent=2)
 EOF
 ```
+
+| Param | Default | Meaning |
+|---|---|---|
+| `period_min` / `period_max` | 50 / 250 | monomer period range (bp); TideHunter `-p/-P` and TRF's max period. TRF caps at 2000 |
+| `min_copies` | 5 | TRF candidate filter |
+| `region_window` | 1000000 | decompose only the densest window of this size per scaffold (0 = legacy merged span) |
+| `max_monomers` | 100 | most abundant cd-hit clusters passed to stringDecomposer (0 = all) |
+
+**Run twice for a new species:** the default 50–250 bp first, then a **wide pass** with `"period_max": 2000` in a separate run dir (e.g. `wide/`). A satellite longer than 250 bp is invisible to the first pass (*B. coccina*: 685 bp and ~1.2 kb families found only at 2000).
 
 ### 2. Dry-run preview first: `NXF` 25.x uses `-preview`, not `-dry-run`
 
@@ -68,7 +78,9 @@ echo "launched; log: $RUN_DIR/centromere_run.log"
 
 Progress: `tail -30 "$RUN_DIR/centromere_run.log"`.
 
-**Observed timings (PR001, 500 Mb assembly, 173 contigs, 24 cpus / 96 GB):** TideHunter ~13 min and TRF ~26 min (parallel), identify/summary instant, stringdecomposer = 173 short tasks (seconds each). Full pipeline **under an hour** — when in doubt, run fresh rather than fighting `-resume`.
+**Observed timings:** PR001 (500 Mb, 173 contigs, 24 cpus / 96 GB): TideHunter ~13 min, TRF ~26 min in parallel, 173 short stringdecomposer tasks; **under an hour**. *B. coccina* (478 Mb, 33 scaffolds, 6 Gb of reads, 64 cpus): TideHunter ~7 min (10 GB RSS) and TRF split per scaffold ~5 min; stringdecomposer ~35 s and ~10 GB per scaffold at 1 Mb × 100 monomers with 8 threads (peak 29.6 GB at the default 24; full v1.1.0 rerun of the case that OOM-killed v1.0.0: 33 scaffolds, 18 min). When in doubt, run fresh rather than fighting `-resume`.
+
+**Watching a long run:** a monitor that *times out* is not a finished job. Check `pgrep -f nextflow-runner/main.nf` and `tail centromere_run.log`, then re-arm the watcher.
 
 ### 5. Resume after failure
 
@@ -78,6 +90,7 @@ $NF run "$SKILL_ROOT/runners/nextflow-runner/main.nf" -profile local -params-fil
 
 **Resume gotchas:**
 
+- Changing `period_*`, `region_window` or `max_monomers` changes the task hashes, so the affected processes rerun. After editing a published input by hand, use a fresh run dir instead of `-resume`.
 - `-resume` takes **no argument** — it resumes from the **last session in `.nextflow/history`**. If the last session was a `-preview` dry-run or an aborted/empty run, resume starts from scratch.
 - The modules publish with `overwrite: false` — a resumed/fresh run **silently keeps stale files** from earlier runs. Before re-running, move the old `results/centromere/` to trash.
 

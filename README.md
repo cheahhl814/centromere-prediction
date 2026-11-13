@@ -9,10 +9,11 @@ per-scaffold summary — packaged as a BettaMt-convention agent skill wrapping a
 Nextflow DSL2 runner.
 
 > [!NOTE]
-> This skill is a rebuild of the standalone `centromere-prediction` pipeline. The
-> Nextflow code (5 processes) is kept verbatim from the source that fixed 5 latent
-> Betta_v3-era bugs (see the orchestrator `SKILL.md` §4); only the skill
-> documentation layer was restructured into preflight → run → qc → debug sub-skills.
+> This skill is a rebuild of the standalone `centromere-prediction` pipeline (5 latent
+> Betta_v3-era bugs fixed, see the orchestrator `SKILL.md` §4). **v1.1.0** (first real
+> *Betta coccina* run) makes the period range a parameter, bounds `stringdecomposer`
+> memory, publishes the real decomposition table (v1.0.0 published only its log), and adds
+> satellite mapping, a telomere cross-check and evidence figures.
 
 ## Contents
 
@@ -87,18 +88,28 @@ assembly/reads before running.
 
 | Process | Output | Purpose |
 |---|---|---|
-| `tidehunter_cluster` | `tidehunter/consensus_clustered.fasta` | tandem-repeat monomers from reads, clustered at 80% |
-| `trf_density` | `trf/centromere_candidate_repeats.bed`, `trf/centromere_density_100kb.bed`, `trf/genome.sizes` | 50–250 bp repeats ≥5 copies + density per 100 kb window |
-| `identify_regions` | `regions/candidate_regions.tsv` | top-10 density windows per scaffold, merged |
-| `stringdecomposer` | `stringdecomposer/<scaffold>/*` | monomer decomposition of each candidate region |
-| `centromere_summary` | `centromere_summary.tsv` | per-scaffold repeat span + count |
+| `tidehunter_cluster` | `tidehunter/consensus_clustered.fasta`, `monomers_top.fasta`, `monomer_ranking.tsv` | tandem-repeat monomers from reads, clustered at 80%, ranked by cluster size, top `--max_monomers` kept |
+| `trf_density` | `trf/all_repeats.bed`, `trf/centromere_candidate_repeats.bed`, `trf/centromere_density_100kb.bed`, `trf/genome.sizes` | repeats in `--period_min`–`--period_max` bp with ≥ `--min_copies`, density per 100 kb window |
+| `identify_regions` | `regions/candidate_regions.tsv` | densest `--region_window` (default 1 Mb) per scaffold |
+| `stringdecomposer` | `stringdecomposer/<scaffold>/decomposition.tsv` (+ log, region fasta) | monomer decomposition of each candidate region against the capped monomers |
+| `centromere_summary` | `centromere_summary.tsv` | per-scaffold repeat span + count of TRF entries |
+
+Parameters (all optional): `period_min` 50, `period_max` 250 (TRF caps at 2000), `min_copies` 5,
+`region_window` 1000000 (0 = legacy merged top-10 span), `max_monomers` 100 (0 = all).
+Run a **second, wide pass** (`period_max: 2000`) before accepting a negative result: TRF stops
+at `period_max` itself, so a post-filter cannot recover longer satellites.
+
+QC helpers (run after the pipeline; see `qc/results-qc/SKILL.md` steps 3 and 6–8), all under `bin/`:
+`decomp_stats.py` (per-scaffold dominant-monomer statistics), `satellite_map.py` (BLASTn the dominant
+monomer genome-wide and merge hits into arrays), `telomere_crosscheck.py` (tidk; internal vs capped vs
+uncapped near-end arrays), `evidence_tracks.py` (per-scaffold density/satellite/telomere figures via chartz).
 
 The interpretation rules (healthy ranges, red flags, verdicts) live in
 `qc/results-qc/SKILL.md` — the single source of truth for reading results.
 
 ## Tools
 
-All 6 bioinformatics tools co-solve in the default env (verified by `pixi search`
+All 8 bioinformatics tools co-solve in the default env (verified by `pixi search`
 + joint solve at build time); `nextflow` lives in the isolated `nextflow` env
 (`no-default-feature`), materialized only on demand.
 
@@ -110,6 +121,8 @@ All 6 bioinformatics tools co-solve in the default env (verified by `pixi search
 | samtools | ≥1.19 | faidx extraction + genome sizes |
 | bedtools | ≥2.31 | density windows + coverage + summary |
 | stringdecomposer | ≥1.1.2 | monomer decomposition of candidate regions |
+| BLAST+ | ≥2.14 | map the dominant satellite genome-wide (`satellite_map.py`) |
+| tidk | ≥0.2.6 | telomere-repeat windows (`telomere_crosscheck.py`) |
 | nextflow | ≥23.10 (isolated env) | pipeline runtime (DSL2) |
 
 Offline flag/usage references live in `docs-corpus/<tool>/` — the agent reads
@@ -132,27 +145,33 @@ no GitHub API).
 centromere-prediction/
 ├── SKILL.md                    # orchestrator router (start reading here for agents)
 ├── README.md                   # this file
-├── pixi.toml                   # one manifest: 6 tools + isolated nextflow env
+├── pixi.toml                   # one manifest: 8 tools + isolated nextflow env
 ├── params.json                 # skill-forge render input (tracked)
 ├── bin/
-│   ├── extract_candidate_region.sh   # top-10 density windows → merged region
+│   ├── extract_candidate_region.sh   # densest window per scaffold (window 0 = legacy merged top-10)
+│   ├── rank_monomers.py              # cd-hit clusters → top-N by size + ranking table
+│   ├── decomp_stats.py               # per-scaffold dominant-monomer stats
+│   ├── satellite_map.py              # BLASTn a monomer genome-wide → arrays
+│   ├── telomere_crosscheck.py        # tidk: internal vs capped vs uncapped arrays
+│   ├── evidence_tracks.py            # chartz per-scaffold evidence figures
 │   └── skill-update-check.py         # self-update check
 ├── preflight/run-preflight/    # Phase 1: input/env validation
 ├── run/pipeline-run/           # Phase 2: run the workflow
 ├── qc/results-qc/              # Phase 3: interpret → centromere_report.md
 ├── debug/run-debug/            # failure interpreter (signature library)
 ├── docs-corpus/<tool>/         # offline tool docs (help captures / repo READMEs)
-├── test-data/                  # deterministic fixtures + MANIFEST.tsv
+├── test-data/                  # deterministic fixtures + MANIFEST.tsv (+ satellite fixture, MANIFEST_sat.tsv)
 └── runners/nextflow-runner/    # the thin DSL2 runner (main.nf, modules, config)
 ```
 
 ## Hard guarantees
 
-- The Nextflow module code is the **verbatim** source proven to run end-to-end on a
-  real assembly (PR001: 173 scaffolds fully decomposed after the 4 fixed bugs + the
-  `143a5dc` value-channel fix) — only manifest paths were adapted to the skill layout.
-- The TRF period filter (50–250 bp, ≥5 copies) is vertebrate-tuned and documented as
-  such; customization is post-processing, not a module fork.
+- The pipeline ran end-to-end on two real assemblies: PR001 (v1.0.0, 173 scaffolds) and
+  *B. coccina* BC001 (v1.1.0, 33 scaffolds; the stock v1.0.0 step OOM-killed on it, which
+  motivated the v1.1.0 changes). `-profile test -stub-run` (empty-signal fixtures) and
+  `-profile test_sat` (a real run on a satellite fixture) are the regression canaries.
+- The default period range (50–250 bp, ≥5 copies) is vertebrate-tuned. It is a parameter, and
+  a negative result must be re-checked at `period_max: 2000` before it is believed.
 - `publishDir` uses `overwrite: false` — stale-run contamination is guarded by the
   preflight stale-results check and surfaced in run/debug instructions.
 - Deterministic test fixtures (`test-data/`, fixed seed, sha256 manifest) back the

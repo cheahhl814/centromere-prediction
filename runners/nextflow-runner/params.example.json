@@ -1,4 +1,9 @@
 {
   "reads": "/home/mumgp/hdd2/Parosphromenus_rubrimontis/qc/nf-qc-run/results/trim/Parosphromenus_rubrimontis_trimmed.fastq.gz",
-  "assembly": "/home/mumgp/hdd2/Parosphromenus_rubrimontis/wgs/results/polish/polish/ntLink_scaffolds_polish.fasta"
+  "assembly": "/home/mumgp/hdd2/Parosphromenus_rubrimontis/wgs/results/polish/polish/ntLink_scaffolds_polish.fasta",
+  "period_min": 50,
+  "period_max": 250,
+  "min_copies": 5,
+  "region_window": 1000000,
+  "max_monomers": 100
 }
